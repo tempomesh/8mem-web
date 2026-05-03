@@ -103,9 +103,9 @@ cd 8mem</div>
 Choose [1]:</div>
         <div class="choice-grid">
           <div class="choice"><strong>1. Browser UI only</strong><span>Best first QA path. No Telegram token needed. You can use the dashboard and local Test Chat.</span></div>
-          <div class="choice"><strong>2. Telegram bot</strong><span>Use this only if you already have a BotFather token. A public HTTPS URL is needed for live webhooks.</span></div>
+          <div class="choice"><strong>2. Telegram bot</strong><span>Use this only if you already have a BotFather token. A public HTTPS URL is needed for live webhooks. You can add it later with <strong>8mem setup --mode telegram</strong>.</span></div>
           <div class="choice"><strong>3. Both</strong><span>Sets up local browser UI and Telegram in one pass. Use this for full channel testing.</span></div>
-          <div class="choice"><strong>4. Skip optional setup</strong><span>Creates local runtime files only. Run <strong>8mem setup</strong> later to add Telegram or Ollama.</span></div>
+          <div class="choice"><strong>4. Skip optional setup</strong><span>Creates local runtime files only. Run <strong>8mem setup --mode telegram</strong> later to add Telegram, or <strong>8mem setup</strong> to revisit all choices.</span></div>
         </div>
         <p class="small"><strong>Ollama prompt:</strong> choose <strong>N</strong> unless Ollama is already installed. If you choose <strong>Y</strong>, press Enter to accept <strong>http://localhost:11434</strong> and the default model, or type a real value like <strong>qwen2.5:14b</strong>.</p>
         <p class="small"><strong>Telegram prompt:</strong> paste a real BotFather token only when choosing option 2 or 3. Press Enter to generate the webhook secret. Press Enter to skip public URL if you do not have ngrok, Tailscale Funnel, or another HTTPS URL yet.</p>
@@ -169,7 +169,7 @@ test -n "$API_KEY" &amp;&amp; echo "API key loaded"</div>
         <div class="badge gold">If Telegram is not ready</div>
         <h3>Skip it first</h3>
         <p>8mem can install and run locally without Telegram. Configure Telegram later with:</p>
-        <div class="command">8mem setup</div>
+        <div class="command">8mem setup --mode telegram</div>
       </div>
       <div class="card">
         <div class="badge gold">If Ollama is missing</div>
