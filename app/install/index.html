@@ -26,8 +26,12 @@
     .muted-link{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
     .checklist{margin:12px 0 0;padding-left:20px;color:#cbd7ea;line-height:1.65}
     .checklist strong{color:#fff}
+    .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+    .choice{border:1px solid rgba(126,231,255,.2);background:rgba(126,231,255,.055);border-radius:16px;padding:14px}
+    .choice strong{display:block;color:#fff;margin-bottom:4px}
+    .choice span{color:#cbd7ea;font-size:14px;line-height:1.45}
     .install-footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
-    @media(max-width:760px){.install-shell{padding:18px}.install-hero h1{font-size:34px}.command{font-size:13px}}
+    @media(max-width:760px){.install-shell{padding:18px}.install-hero h1{font-size:34px}.command{font-size:13px}.choice-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -90,7 +94,21 @@ cd 8mem</div>
       <div class="card">
         <div class="step-title"><span class="step-number">3</span><h2>Run the installer</h2></div>
         <div class="command">bash ./install.sh</div>
-        <p class="small">During setup, you can configure Telegram now, skip it, or run setup later. If you do not have a BotFather token, skip Telegram.</p>
+        <p class="small">During setup, choose how you want to test first. If you are unsure, choose <strong>1</strong>.</p>
+        <div class="command">How do you want to use 8mem first?
+1. Browser UI only (recommended first)
+2. Telegram bot
+3. Both browser UI and Telegram
+4. Skip optional setup
+Choose [1]:</div>
+        <div class="choice-grid">
+          <div class="choice"><strong>1. Browser UI only</strong><span>Best first QA path. No Telegram token needed. You can use the dashboard and local Test Chat.</span></div>
+          <div class="choice"><strong>2. Telegram bot</strong><span>Use this only if you already have a BotFather token. A public HTTPS URL is needed for live webhooks.</span></div>
+          <div class="choice"><strong>3. Both</strong><span>Sets up local browser UI and Telegram in one pass. Use this for full channel testing.</span></div>
+          <div class="choice"><strong>4. Skip optional setup</strong><span>Creates local runtime files only. Run <strong>8mem setup</strong> later to add Telegram or Ollama.</span></div>
+        </div>
+        <p class="small"><strong>Ollama prompt:</strong> choose <strong>N</strong> unless Ollama is already installed. If you choose <strong>Y</strong>, press Enter to accept <strong>http://localhost:11434</strong> and the default model, or type a real value like <strong>qwen2.5:14b</strong>.</p>
+        <p class="small"><strong>Telegram prompt:</strong> paste a real BotFather token only when choosing option 2 or 3. Press Enter to generate the webhook secret. Press Enter to skip public URL if you do not have ngrok, Tailscale Funnel, or another HTTPS URL yet.</p>
         <p class="small"><strong>Expected result:</strong> the installer creates a local virtual environment, installs the <strong>8mem</strong> command, and prints next steps. It should not ask you to paste secrets into this webpage.</p>
       </div>
 
@@ -105,7 +123,8 @@ cd 8mem</div>
       <div class="card">
         <div class="step-title"><span class="step-number">5</span><h2>Start 8mem</h2></div>
         <div class="command">8mem serve --host 127.0.0.1 --port 8787</div>
-        <p class="small">Then open <a class="muted-link" href="http://127.0.0.1:8787">http://127.0.0.1:8787</a> on the same machine.</p>
+        <p class="small">Then open <a class="muted-link" href="http://127.0.0.1:8787">http://127.0.0.1:8787</a> on the same machine for the dashboard.</p>
+        <p class="small">To chat in the browser UI, open <a class="muted-link" href="http://127.0.0.1:8787/chat">http://127.0.0.1:8787/chat</a>. Test Chat needs Ollama running; the rest of the dashboard works without Telegram.</p>
         <p class="small"><strong>Keep this terminal open</strong> while testing. Press <strong>Ctrl+C</strong> in that terminal to stop the server.</p>
       </div>
 
