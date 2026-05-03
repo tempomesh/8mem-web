@@ -18,6 +18,8 @@
     .warning{border-color:rgba(255,107,107,.32);background:rgba(255,107,107,.08)}
     .success{border-color:rgba(70,214,168,.26);background:rgba(70,214,168,.06)}
     .muted-link{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+    .checklist{margin:12px 0 0;padding-left:20px;color:#cbd7ea;line-height:1.65}
+    .checklist strong{color:#fff}
     .install-footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
     @media(max-width:760px){.install-shell{padding:18px}.install-hero h1{font-size:34px}.command{font-size:13px}}
   </style>
@@ -47,13 +49,30 @@
       </section>
     </div>
 
+    <section class="card" style="margin-top:22px">
+      <div class="header">
+        <div>
+          <div class="kicker">Tester checklist</div>
+          <h3>What you need before running this</h3>
+        </div>
+        <span class="badge blue">5 minutes</span>
+      </div>
+      <ul class="checklist">
+        <li><strong>Operating system:</strong> macOS or Linux recommended for this private beta. Windows users should use WSL2.</li>
+        <li><strong>GitHub:</strong> you must have access to the private <strong>tempomesh/8mem</strong> repo.</li>
+        <li><strong>Terminal tools:</strong> <strong>git</strong>, <strong>python3</strong>, and preferably <strong>gh</strong> GitHub CLI.</li>
+        <li><strong>Telegram:</strong> optional. You can skip Telegram during setup and add it later.</li>
+        <li><strong>Ollama/local LLM:</strong> optional. Install later if <strong>8mem doctor</strong> says the LLM backend is missing.</li>
+      </ul>
+    </section>
+
     <section id="install" class="grid" style="margin-top:22px">
       <div class="card">
         <div class="step-title"><span class="step-number">1</span><h2>Authenticate GitHub</h2></div>
         <p>If your machine is not already authenticated with GitHub, run:</p>
         <div class="command">gh auth login
 gh auth setup-git</div>
-        <p class="small">If `gh` is not installed, use GitHub's official CLI installer for your operating system. Do not share tokens with anyone.</p>
+        <p class="small">If <strong>gh</strong> is not installed, use GitHub's official CLI installer for your operating system. Do not share tokens with anyone.</p>
       </div>
 
       <div class="card">
@@ -66,18 +85,20 @@ cd 8mem</div>
         <div class="step-title"><span class="step-number">3</span><h2>Run the installer</h2></div>
         <div class="command">./install.sh</div>
         <p class="small">During setup, you can configure Telegram now, skip it, or run setup later. If you do not have a BotFather token, skip Telegram.</p>
+        <p class="small"><strong>Expected result:</strong> the installer creates a local virtual environment, installs the <strong>8mem</strong> command, and prints next steps. It should not ask you to paste secrets into this webpage.</p>
       </div>
 
       <div class="card">
         <div class="step-title"><span class="step-number">4</span><h2>Verify the install</h2></div>
         <div class="command">8mem doctor</div>
-        <p class="small">Doctor should show what passed, what is optional, and what needs fixing.</p>
+        <p class="small"><strong>Expected result:</strong> Doctor should show core checks as passing. Telegram and Ollama may appear as optional or needing setup depending on what you chose.</p>
       </div>
 
       <div class="card">
         <div class="step-title"><span class="step-number">5</span><h2>Start 8mem</h2></div>
         <div class="command">8mem serve --host 127.0.0.1 --port 8787</div>
         <p class="small">Then open <a class="muted-link" href="http://127.0.0.1:8787">http://127.0.0.1:8787</a> on the same machine.</p>
+        <p class="small"><strong>Keep this terminal open</strong> while testing. Press <strong>Ctrl+C</strong> in that terminal to stop the server.</p>
       </div>
 
       <div class="card">
@@ -88,6 +109,7 @@ curl -s http://127.0.0.1:8787/readyz
 curl -s http://127.0.0.1:8787/v1/context \
   -H "Authorization: Bearer $API_KEY"</div>
         <p class="small">Setup writes your local API key to `~/.8mem/.env`. Keep that file private and do not paste the key into shared chats.</p>
+        <p class="small"><strong>Expected result:</strong> <strong>/readyz</strong> returns JSON with <strong>"ok": true</strong>. <strong>/v1/context</strong> returns Engram JSON with <strong>engram_version</strong>, <strong>identity</strong>, and <strong>system_prompt_injection</strong>.</p>
       </div>
     </section>
 
@@ -106,6 +128,13 @@ gh auth setup-git</div>
 ~/.8mem/venv/bin/8mem serve --host 127.0.0.1 --port 8787</div>
       </div>
       <div class="card">
+        <div class="badge blue">If API returns 401</div>
+        <h3>Reload the local key</h3>
+        <div class="command">API_KEY="$(grep '^EIGHTMEM_LOCAL_API_KEY=' ~/.8mem/.env | cut -d= -f2- | tr -d '"')"
+test -n "$API_KEY" &amp;&amp; echo "API key loaded"</div>
+        <p class="small">Do not print or share the key. Use it only in your own terminal for local testing.</p>
+      </div>
+      <div class="card">
         <div class="badge gold">If Telegram is not ready</div>
         <h3>Skip it first</h3>
         <p>8mem can install and run locally without Telegram. Configure Telegram later with:</p>
@@ -117,6 +146,31 @@ gh auth setup-git</div>
         <div class="command">curl -fsSL https://ollama.com/install.sh | sh
 ollama pull qwen2.5:14b</div>
       </div>
+      <div class="card">
+        <div class="badge gold">If you need to update</div>
+        <h3>Pull latest and reinstall</h3>
+        <div class="command">cd 8mem
+git pull
+./install.sh
+8mem doctor</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:22px">
+      <div class="header">
+        <div>
+          <div class="kicker">Success criteria</div>
+          <h3>When to mark the install as PASS</h3>
+        </div>
+        <span class="badge green">PASS</span>
+      </div>
+      <ul class="checklist">
+        <li><strong>Install:</strong> <strong>./install.sh</strong> completes without a crash.</li>
+        <li><strong>Doctor:</strong> <strong>8mem doctor</strong> clearly reports the core install state.</li>
+        <li><strong>Server:</strong> <strong>8mem serve --host 127.0.0.1 --port 8787</strong> starts and stays running.</li>
+        <li><strong>Health:</strong> <strong>curl /readyz</strong> returns <strong>"ok": true</strong>.</li>
+        <li><strong>Context:</strong> <strong>curl /v1/context</strong> returns valid JSON, not 401/404/500.</li>
+      </ul>
     </section>
 
     <section class="card" style="margin-top:22px">
@@ -129,13 +183,18 @@ ollama pull qwen2.5:14b</div>
       </div>
       <div class="command">Install result: PASS/FAIL
 OS:
+Machine:
 Python:
 Git:
 GitHub auth:
+Install command used:
 8mem doctor summary:
 /readyz result:
 /v1/context summary:
-Top issue:</div>
+Telegram configured: yes/no/skipped
+Ollama configured: yes/no/skipped
+Top issue:
+Screenshot or terminal error, if any:</div>
     </section>
 
     <div class="install-footer">
