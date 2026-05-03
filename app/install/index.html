@@ -82,10 +82,12 @@ cd 8mem</div>
 
       <div class="card">
         <div class="step-title"><span class="step-number">6</span><h2>Test the local API</h2></div>
-        <div class="command">curl -s http://127.0.0.1:8787/readyz
+        <div class="command">API_KEY="$(grep '^EIGHTMEM_LOCAL_API_KEY=' ~/.8mem/.env | cut -d= -f2- | tr -d '"')"
+
+curl -s http://127.0.0.1:8787/readyz
 curl -s http://127.0.0.1:8787/v1/context \
-  -H "Authorization: Bearer local_key"</div>
-        <p class="small">For private local testing, `local_key` is the default fallback. If setup generated a different key, the installer prints the command to retrieve it from your local `.env` file.</p>
+  -H "Authorization: Bearer $API_KEY"</div>
+        <p class="small">Setup writes your local API key to `~/.8mem/.env`. Keep that file private and do not paste the key into shared chats.</p>
       </div>
     </section>
 
