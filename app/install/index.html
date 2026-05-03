@@ -7,10 +7,16 @@
   <title>8mem Private Beta Install</title>
   <link rel="stylesheet" href="../../styles.css">
   <style>
+    :root{--line:rgba(255,255,255,.16);--gold:#f2c46d;--muted:#b9c5d8}
     .install-shell{max-width:1080px;margin:0 auto;padding:34px}
     .install-hero{padding:34px;border-radius:28px;background:linear-gradient(135deg,rgba(242,196,109,.12),rgba(70,214,168,.08) 48%,rgba(122,162,255,.08)),rgba(255,255,255,.035);border:1px solid var(--line)}
     .install-hero h1{font-size:46px;line-height:1.02;margin:12px 0 14px;max-width:780px}
     .install-hero p{font-size:18px;line-height:1.55;color:#cbd7ea;max-width:820px}
+    .install-hero .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .install-hero .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:12px 18px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#f8fbff;text-decoration:none;font-weight:800;letter-spacing:.01em}
+    .install-hero .btn.primary{background:#f2c46d;color:#10141c;border-color:#f2c46d}
+    .install-hero .btn:hover{filter:brightness(1.08)}
+    .install-shell a{color:#7ee7ff;text-decoration-thickness:2px;text-underline-offset:4px}
     .command{position:relative;margin:14px 0;padding:18px 20px;border-radius:18px;background:#050b16;border:1px solid rgba(242,196,109,.22);font:15px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f7f1dd;white-space:pre-wrap;overflow:auto}
     .step-number{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(242,196,109,.14);color:var(--gold);font-weight:900;margin-right:10px}
     .step-title{display:flex;align-items:center;margin-bottom:10px}
@@ -83,7 +89,7 @@ cd 8mem</div>
 
       <div class="card">
         <div class="step-title"><span class="step-number">3</span><h2>Run the installer</h2></div>
-        <div class="command">./install.sh</div>
+        <div class="command">bash ./install.sh</div>
         <p class="small">During setup, you can configure Telegram now, skip it, or run setup later. If you do not have a BotFather token, skip Telegram.</p>
         <p class="small"><strong>Expected result:</strong> the installer creates a local virtual environment, installs the <strong>8mem</strong> command, and prints next steps. It should not ask you to paste secrets into this webpage.</p>
       </div>
@@ -151,7 +157,7 @@ ollama pull qwen2.5:14b</div>
         <h3>Pull latest and reinstall</h3>
         <div class="command">cd 8mem
 git pull
-./install.sh
+bash ./install.sh
 8mem doctor</div>
       </div>
     </section>
@@ -165,7 +171,7 @@ git pull
         <span class="badge green">PASS</span>
       </div>
       <ul class="checklist">
-        <li><strong>Install:</strong> <strong>./install.sh</strong> completes without a crash.</li>
+        <li><strong>Install:</strong> <strong>bash ./install.sh</strong> completes without a crash.</li>
         <li><strong>Doctor:</strong> <strong>8mem doctor</strong> clearly reports the core install state.</li>
         <li><strong>Server:</strong> <strong>8mem serve --host 127.0.0.1 --port 8787</strong> starts and stays running.</li>
         <li><strong>Health:</strong> <strong>curl /readyz</strong> returns <strong>"ok": true</strong>.</li>
