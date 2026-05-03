@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>8mem Private Beta Install</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <style>
+    .install-shell{max-width:1080px;margin:0 auto;padding:34px}
+    .install-hero{padding:34px;border-radius:28px;background:linear-gradient(135deg,rgba(242,196,109,.12),rgba(70,214,168,.08) 48%,rgba(122,162,255,.08)),rgba(255,255,255,.035);border:1px solid var(--line)}
+    .install-hero h1{font-size:46px;line-height:1.02;margin:12px 0 14px;max-width:780px}
+    .install-hero p{font-size:18px;line-height:1.55;color:#cbd7ea;max-width:820px}
+    .command{position:relative;margin:14px 0;padding:18px 20px;border-radius:18px;background:#050b16;border:1px solid rgba(242,196,109,.22);font:15px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f7f1dd;white-space:pre-wrap;overflow:auto}
+    .step-number{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(242,196,109,.14);color:var(--gold);font-weight:900;margin-right:10px}
+    .step-title{display:flex;align-items:center;margin-bottom:10px}
+    .step-title h2{font-size:22px;margin:0}
+    .warning{border-color:rgba(255,107,107,.32);background:rgba(255,107,107,.08)}
+    .success{border-color:rgba(70,214,168,.26);background:rgba(70,214,168,.06)}
+    .muted-link{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+    .install-footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
+    @media(max-width:760px){.install-shell{padding:18px}.install-hero h1{font-size:34px}.command{font-size:13px}}
+  </style>
+</head>
+<body>
+  <main class="install-shell">
+    <section class="install-hero">
+      <div class="badge gold">Private beta</div>
+      <h1>Install 8mem on your machine.</h1>
+      <p>This page is for invited testers with approved access to the private 8mem GitHub repo. It contains no passwords, tokens, API keys, or deploy secrets.</p>
+      <div class="actions">
+        <a class="btn primary" href="#install">Start install</a>
+        <a class="btn" href="#troubleshooting">Troubleshooting</a>
+      </div>
+    </section>
+
+    <div class="grid cols-2" style="margin-top:22px">
+      <section class="card warning">
+        <div class="badge red">Access required</div>
+        <h3>Before you start</h3>
+        <p>You need GitHub access to <strong>tempomesh/8mem</strong>. If you are not invited to the private repo, the clone command will fail.</p>
+      </section>
+      <section class="card success">
+        <div class="badge green">Safe by design</div>
+        <h3>No secrets on this page</h3>
+        <p>Do not paste GitHub tokens, Telegram bot tokens, passwords, or API keys into any shared chat. Authenticate locally on your own machine.</p>
+      </section>
+    </div>
+
+    <section id="install" class="grid" style="margin-top:22px">
+      <div class="card">
+        <div class="step-title"><span class="step-number">1</span><h2>Authenticate GitHub</h2></div>
+        <p>If your machine is not already authenticated with GitHub, run:</p>
+        <div class="command">gh auth login
+gh auth setup-git</div>
+        <p class="small">If `gh` is not installed, use GitHub's official CLI installer for your operating system. Do not share tokens with anyone.</p>
+      </div>
+
+      <div class="card">
+        <div class="step-title"><span class="step-number">2</span><h2>Clone the private repo</h2></div>
+        <div class="command">git clone https://github.com/tempomesh/8mem.git
+cd 8mem</div>
+      </div>
+
+      <div class="card">
+        <div class="step-title"><span class="step-number">3</span><h2>Run the installer</h2></div>
+        <div class="command">./install.sh</div>
+        <p class="small">During setup, you can configure Telegram now, skip it, or run setup later. If you do not have a BotFather token, skip Telegram.</p>
+      </div>
+
+      <div class="card">
+        <div class="step-title"><span class="step-number">4</span><h2>Verify the install</h2></div>
+        <div class="command">8mem doctor</div>
+        <p class="small">Doctor should show what passed, what is optional, and what needs fixing.</p>
+      </div>
+
+      <div class="card">
+        <div class="step-title"><span class="step-number">5</span><h2>Start 8mem</h2></div>
+        <div class="command">8mem serve --host 127.0.0.1 --port 8787</div>
+        <p class="small">Then open <a class="muted-link" href="http://127.0.0.1:8787">http://127.0.0.1:8787</a> on the same machine.</p>
+      </div>
+
+      <div class="card">
+        <div class="step-title"><span class="step-number">6</span><h2>Test the local API</h2></div>
+        <div class="command">curl -s http://127.0.0.1:8787/readyz
+curl -s http://127.0.0.1:8787/v1/context \
+  -H "Authorization: Bearer local_key"</div>
+        <p class="small">For private local testing, `local_key` is the default fallback. If setup generated a different key, the installer prints the command to retrieve it from your local `.env` file.</p>
+      </div>
+    </section>
+
+    <section id="troubleshooting" class="grid cols-2" style="margin-top:22px">
+      <div class="card">
+        <div class="badge blue">If clone fails</div>
+        <h3>Check repo access</h3>
+        <div class="command">gh auth status
+gh auth setup-git</div>
+        <p class="small">The repo is private. Browser access alone may not mean your terminal Git is authenticated.</p>
+      </div>
+      <div class="card">
+        <div class="badge blue">If command not found</div>
+        <h3>Use the installed binary directly</h3>
+        <div class="command">~/.8mem/venv/bin/8mem doctor
+~/.8mem/venv/bin/8mem serve --host 127.0.0.1 --port 8787</div>
+      </div>
+      <div class="card">
+        <div class="badge gold">If Telegram is not ready</div>
+        <h3>Skip it first</h3>
+        <p>8mem can install and run locally without Telegram. Configure Telegram later with:</p>
+        <div class="command">8mem setup</div>
+      </div>
+      <div class="card">
+        <div class="badge gold">If Ollama is missing</div>
+        <h3>Install local model support later</h3>
+        <div class="command">curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen2.5:14b</div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:22px">
+      <div class="header">
+        <div>
+          <div class="kicker">Tester report</div>
+          <h3>What to send back</h3>
+        </div>
+        <span class="badge green">QA</span>
+      </div>
+      <div class="command">Install result: PASS/FAIL
+OS:
+Python:
+Git:
+GitHub auth:
+8mem doctor summary:
+/readyz result:
+/v1/context summary:
+Top issue:</div>
+    </section>
+
+    <div class="install-footer">
+      8mem private beta install guide. No secrets are stored or displayed on this page.
+    </div>
+  </main>
+</body>
+</html>
