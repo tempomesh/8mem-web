@@ -122,10 +122,12 @@ Choose [1]:</div>
 
       <div class="card">
         <div class="step-title"><span class="step-number">5</span><h2>Start 8mem</h2></div>
-        <div class="command">8mem serve --host 127.0.0.1 --port 8787</div>
+        <div class="command">8mem start
+8mem status</div>
         <p class="small">Then open <a class="muted-link" href="http://127.0.0.1:8787">http://127.0.0.1:8787</a> on the same machine for the dashboard.</p>
         <p class="small">To chat in the browser UI, open <a class="muted-link" href="http://127.0.0.1:8787/chat">http://127.0.0.1:8787/chat</a>. Test Chat needs Ollama running; the rest of the dashboard works without Telegram.</p>
-        <p class="small"><strong>Keep this terminal open</strong> while testing. Press <strong>Ctrl+C</strong> in that terminal to stop the server.</p>
+        <p class="small"><strong>8mem start</strong> runs in the background, writes <strong>~/.8mem/8mem.pid</strong>, and logs to <strong>~/.8mem/8mem.log</strong>. Stop it with <strong>8mem stop</strong>.</p>
+        <p class="small">If you want old foreground behavior for debugging, run <strong>8mem start --foreground</strong> or <strong>8mem serve --host 127.0.0.1 --port 8787</strong>.</p>
       </div>
 
       <div class="card">
@@ -156,7 +158,8 @@ gh auth setup-git</div>
 
 # If that still fails:
 ~/.8mem/venv/bin/8mem doctor
-~/.8mem/venv/bin/8mem serve --host 127.0.0.1 --port 8787</div>
+~/.8mem/venv/bin/8mem start
+~/.8mem/venv/bin/8mem status</div>
       </div>
       <div class="card">
         <div class="badge blue">If API returns 401</div>
@@ -198,7 +201,7 @@ bash ./install.sh
       <ul class="checklist">
         <li><strong>Install:</strong> <strong>bash ./install.sh</strong> completes without a crash.</li>
         <li><strong>Doctor:</strong> <strong>8mem doctor</strong> clearly reports the core install state.</li>
-        <li><strong>Server:</strong> <strong>8mem serve --host 127.0.0.1 --port 8787</strong> starts and stays running.</li>
+        <li><strong>Server:</strong> <strong>8mem start</strong> starts the background server and <strong>8mem status</strong> reports it as running.</li>
         <li><strong>Health:</strong> <strong>curl /readyz</strong> returns <strong>"ok": true</strong>.</li>
         <li><strong>Context:</strong> <strong>curl /v1/context</strong> returns valid JSON, not 401/404/500.</li>
       </ul>
