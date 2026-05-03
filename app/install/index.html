@@ -96,8 +96,10 @@ cd 8mem</div>
 
       <div class="card">
         <div class="step-title"><span class="step-number">4</span><h2>Verify the install</h2></div>
-        <div class="command">8mem doctor</div>
+        <div class="command">export PATH="$HOME/.local/bin:$PATH"
+8mem doctor</div>
         <p class="small"><strong>Expected result:</strong> Doctor should show core checks as passing. Telegram and Ollama may appear as optional or needing setup depending on what you chose.</p>
+        <p class="small">If your shell still says <strong>8mem: command not found</strong>, use <strong>~/.8mem/venv/bin/8mem doctor</strong>.</p>
       </div>
 
       <div class="card">
@@ -130,7 +132,11 @@ gh auth setup-git</div>
       <div class="card">
         <div class="badge blue">If command not found</div>
         <h3>Use the installed binary directly</h3>
-        <div class="command">~/.8mem/venv/bin/8mem doctor
+        <div class="command">export PATH="$HOME/.local/bin:$PATH"
+8mem doctor
+
+# If that still fails:
+~/.8mem/venv/bin/8mem doctor
 ~/.8mem/venv/bin/8mem serve --host 127.0.0.1 --port 8787</div>
       </div>
       <div class="card">
