@@ -186,7 +186,11 @@ ollama pull qwen2.5:14b</div>
         <div class="command">cd 8mem
 git pull
 bash ./install.sh
-8mem doctor</div>
+8mem doctor
+8mem stop
+8mem start
+8mem status</div>
+        <p class="small"><strong>Important:</strong> <strong>git pull</strong> updates the source checkout, but installed testers run the package inside <strong>~/.8mem/venv</strong>. Always rerun <strong>bash ./install.sh</strong> after pulling new code.</p>
       </div>
     </section>
 
