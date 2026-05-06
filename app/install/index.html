@@ -116,7 +116,7 @@ Choose [1]:</div>
           <div class="choice"><strong>4. Skip optional setup</strong><span>Creates local runtime files only. Run <strong>8mem setup --mode telegram</strong> later to add Telegram, or <strong>8mem setup</strong> to revisit all choices.</span></div>
         </div>
         <p class="small"><strong>Ollama prompt:</strong> choose <strong>N</strong> unless Ollama is already installed. If you choose <strong>Y</strong>, press Enter to accept <strong>http://localhost:11434</strong> and the default model, or type a real value like <strong>qwen2.5:14b</strong>.</p>
-        <p class="small"><strong>Telegram prompt:</strong> paste a real BotFather token only when choosing option 2 or 3. Press Enter to generate the webhook secret. Press Enter to skip public URL if you do not have ngrok, Tailscale Funnel, or another HTTPS URL yet.</p>
+        <p class="small"><strong>Telegram prompt:</strong> paste a real BotFather token only when choosing option 2 or 3. Press Enter to generate the webhook secret. The public HTTPS URL is only needed when Telegram must reach this local 8mem server. Examples: <strong>https://your-ngrok-domain.ngrok-free.app</strong>, <strong>https://your-device.tailnet.ts.net</strong>, or your own HTTPS domain. Press Enter to skip it and add it later with <strong>8mem setup --mode telegram</strong>.</p>
         <p class="small"><strong>Expected result:</strong> the installer creates a local virtual environment, installs the <strong>8mem</strong> command, and prints next steps. It should not ask you to paste secrets into this webpage.</p>
       </div>
 
@@ -195,9 +195,11 @@ ollama pull qwen2.5:14b</div>
 git pull
 bash ./install.sh
 8mem doctor
-8mem stop
-8mem start
-8mem status</div>
+systemctl --user restart 8mem.service
+8mem status
+
+# If you are not using systemd:
+8mem stop &amp;&amp; 8mem start</div>
         <p class="small"><strong>Important:</strong> <strong>git pull</strong> updates the source checkout, but installed testers run the package inside <strong>~/.8mem/venv</strong>. Always rerun <strong>bash ./install.sh</strong> after pulling new code.</p>
       </div>
     </section>
