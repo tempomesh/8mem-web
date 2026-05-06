@@ -50,7 +50,7 @@
       <section class="card warning">
         <div class="badge red">Access required</div>
         <h3>Before you start</h3>
-        <p>You need GitHub access to <strong>tempomesh/8mem</strong>. If you are not invited to the private repo, the clone command will fail.</p>
+        <p>You need GitHub access to <strong>tempomesh/8mem</strong>. If you are not invited to the private repo, the installer will fail safely before cloning.</p>
       </section>
       <section class="card success">
         <div class="badge green">Safe by design</div>
@@ -78,22 +78,30 @@
 
     <section id="install" class="grid" style="margin-top:22px">
       <div class="card">
-        <div class="step-title"><span class="step-number">1</span><h2>Authenticate GitHub</h2></div>
+        <div class="step-title"><span class="step-number">1</span><h2>Install with one command</h2></div>
+        <p>After GitHub is authenticated on this machine, run:</p>
+        <div class="command">curl -fsSL https://8mem.com/install.sh | bash</div>
+        <p class="small">This script contains no secrets. It checks access to the private repo, clones or updates the source under <strong>~/.8mem/src/8mem</strong>, then runs the normal local installer.</p>
+      </div>
+
+      <div class="card">
+        <div class="step-title"><span class="step-number">2</span><h2>Authenticate GitHub if needed</h2></div>
         <p>If your machine is not already authenticated with GitHub, run:</p>
         <div class="command">gh auth login
 gh auth setup-git</div>
-        <p class="small">If <strong>gh</strong> is not installed, use GitHub's official CLI installer for your operating system. Do not share tokens with anyone.</p>
+        <p class="small">Then rerun the one-line installer. If <strong>gh</strong> is not installed, use GitHub's official CLI installer for your operating system. Do not share tokens with anyone.</p>
       </div>
 
       <div class="card">
-        <div class="step-title"><span class="step-number">2</span><h2>Clone the private repo</h2></div>
+        <div class="step-title"><span class="step-number">3</span><h2>Manual fallback</h2></div>
+        <p>Use this only if the one-line installer is blocked by your shell or network.</p>
         <div class="command">git clone https://github.com/tempomesh/8mem.git
-cd 8mem</div>
+cd 8mem
+bash ./install.sh</div>
       </div>
 
       <div class="card">
-        <div class="step-title"><span class="step-number">3</span><h2>Run the installer</h2></div>
-        <div class="command">bash ./install.sh</div>
+        <div class="step-title"><span class="step-number">4</span><h2>Answer setup choices</h2></div>
         <p class="small">During setup, choose how you want to test first. If you are unsure, choose <strong>1</strong>.</p>
         <div class="command">How do you want to use 8mem first?
 1. Browser UI only (recommended first)
@@ -113,7 +121,7 @@ Choose [1]:</div>
       </div>
 
       <div class="card">
-        <div class="step-title"><span class="step-number">4</span><h2>Verify the install</h2></div>
+        <div class="step-title"><span class="step-number">5</span><h2>Verify the install</h2></div>
         <div class="command">export PATH="$HOME/.local/bin:$PATH"
 8mem doctor</div>
         <p class="small"><strong>Expected result:</strong> Doctor should show core checks as passing. Telegram and Ollama may appear as optional or needing setup depending on what you chose.</p>
@@ -121,7 +129,7 @@ Choose [1]:</div>
       </div>
 
       <div class="card">
-        <div class="step-title"><span class="step-number">5</span><h2>Start 8mem</h2></div>
+        <div class="step-title"><span class="step-number">6</span><h2>Start 8mem</h2></div>
         <div class="command">8mem start
 8mem status</div>
         <p class="small">Then open <a class="muted-link" href="http://127.0.0.1:8787">http://127.0.0.1:8787</a> on the same machine for the dashboard.</p>
@@ -131,7 +139,7 @@ Choose [1]:</div>
       </div>
 
       <div class="card">
-        <div class="step-title"><span class="step-number">6</span><h2>Test the local API</h2></div>
+        <div class="step-title"><span class="step-number">7</span><h2>Test the local API</h2></div>
         <div class="command">API_KEY="$(grep '^EIGHTMEM_LOCAL_API_KEY=' ~/.8mem/.env | cut -d= -f2- | tr -d '"')"
 
 curl -s http://127.0.0.1:8787/readyz
