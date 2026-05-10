@@ -12,13 +12,14 @@ set -euo pipefail
 
 APP_NAME="8mem"
 WHEEL_URL="${EIGHTMEM_WHEEL_URL:-https://8mem.com/app/install/8mem-0.1.0-py3-none-any.whl}"
-WHEEL_SHA256="${EIGHTMEM_WHEEL_SHA256:-e8176406932db7268e129d8dca5b00b842c4bb647dcc2d888f1e53c6af6d90eb}"
+WHEEL_SHA256="${EIGHTMEM_WHEEL_SHA256:-631c5136502a8bbf92c164beefebe015f08b5a2cfafb19e22562d9920e8d8d9a}"
 RUNTIME_HOME="${EIGHTMEM_HOME:-$HOME/.8mem}"
 VENV_DIR="${EIGHTMEM_VENV:-$HOME/.8mem/venv}"
 BIN_DIR="${EIGHTMEM_BIN_DIR:-$HOME/.local/bin}"
 RUN_SETUP="${EIGHTMEM_RUN_SETUP:-1}"
 SETUP_MODE="skipped"
 OPENCLAW_WIRED="0"
+OPENCLAW_WIRE_FAILED="0"
 TELEGRAM_CONFIGURED="0"
 
 info() {
@@ -132,8 +133,14 @@ run_setup() {
     if [ -f "$HOME/.openclaw/openclaw.json" ]; then
       info ""
       info "OpenClaw detected - wiring Viri automatically."
-      "$VENV_DIR/bin/8mem" setup --mode openclaw --non-interactive --skip-telegram --skip-llm-check --no-status --no-next-steps
-      OPENCLAW_WIRED="1"
+      if "$VENV_DIR/bin/8mem" setup --mode openclaw --non-interactive --skip-telegram --skip-llm-check --no-status --no-next-steps; then
+        OPENCLAW_WIRED="1"
+      else
+        OPENCLAW_WIRE_FAILED="1"
+        info "OpenClaw wiring was skipped because setup could not safely update the workspace."
+        info "Run this after fixing the OpenClaw workspace issue:"
+        info "  8mem setup --mode openclaw"
+      fi
     else
       info ""
       info "OpenClaw not detected. 8mem will run as a standalone memory bot if Telegram was configured."
@@ -203,6 +210,11 @@ print_next_steps() {
     info ""
     info "To undo OpenClaw wiring:"
     info "  8mem uninstall --mode openclaw"
+  elif [ "$OPENCLAW_WIRE_FAILED" = "1" ]; then
+    info ""
+    info "OpenClaw was detected, but Viri was not wired automatically."
+    info "Fix the workspace warning above, then run:"
+    info "  8mem setup --mode openclaw"
   elif [ "$SETUP_MODE" != "interactive" ] && [ -f "$HOME/.openclaw/openclaw.json" ]; then
     info ""
     info "OpenClaw detected. Wire Viri with:"
