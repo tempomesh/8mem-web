@@ -12,12 +12,14 @@ set -euo pipefail
 
 APP_NAME="8mem"
 WHEEL_URL="${EIGHTMEM_WHEEL_URL:-https://8mem.com/app/install/8mem-0.1.0-py3-none-any.whl}"
-WHEEL_SHA256="${EIGHTMEM_WHEEL_SHA256:-dcb798466d4d9194fbdf0ea08e8e1f09abec061fb78266dd2114c606897b8555}"
+WHEEL_SHA256="${EIGHTMEM_WHEEL_SHA256:-e8176406932db7268e129d8dca5b00b842c4bb647dcc2d888f1e53c6af6d90eb}"
 RUNTIME_HOME="${EIGHTMEM_HOME:-$HOME/.8mem}"
 VENV_DIR="${EIGHTMEM_VENV:-$HOME/.8mem/venv}"
 BIN_DIR="${EIGHTMEM_BIN_DIR:-$HOME/.local/bin}"
 RUN_SETUP="${EIGHTMEM_RUN_SETUP:-1}"
 SETUP_MODE="skipped"
+OPENCLAW_WIRED="0"
+TELEGRAM_CONFIGURED="0"
 
 info() {
   printf '%s\n' "$*"
@@ -111,6 +113,10 @@ path_contains_bin_dir() {
   esac
 }
 
+has_interactive_tty() {
+  [ -r /dev/tty ] && [ -w /dev/tty ] && { : < /dev/tty; } 2>/dev/null
+}
+
 run_setup() {
   if [ "$RUN_SETUP" != "1" ]; then
     info "Skipping setup because EIGHTMEM_RUN_SETUP=$RUN_SETUP"
@@ -120,13 +126,25 @@ run_setup() {
 
   info ""
   info "Running first-time setup."
-  if [ -t 0 ] && [ -r /dev/tty ]; then
+  if has_interactive_tty; then
     SETUP_MODE="interactive"
-    "$VENV_DIR/bin/8mem" setup < /dev/tty
+    "$VENV_DIR/bin/8mem" setup --mode both --skip-llm-check --no-next-steps < /dev/tty
+    if [ -f "$HOME/.openclaw/openclaw.json" ]; then
+      info ""
+      info "OpenClaw detected - wiring Viri automatically."
+      "$VENV_DIR/bin/8mem" setup --mode openclaw --non-interactive --skip-telegram --skip-llm-check --no-status --no-next-steps
+      OPENCLAW_WIRED="1"
+    else
+      info ""
+      info "OpenClaw not detected. 8mem will run as a standalone memory bot if Telegram was configured."
+    fi
   else
     SETUP_MODE="non_interactive"
     info "No interactive terminal detected; running safe non-interactive setup."
-    "$VENV_DIR/bin/8mem" setup --non-interactive --skip-telegram --skip-llm-check
+    "$VENV_DIR/bin/8mem" setup --non-interactive --skip-telegram --skip-llm-check --no-next-steps
+  fi
+  if [ -f "$RUNTIME_HOME/.env" ] && grep -q '^TELEGRAM_BOT_TOKEN=' "$RUNTIME_HOME/.env"; then
+    TELEGRAM_CONFIGURED="1"
   fi
 }
 
@@ -171,12 +189,35 @@ print_next_steps() {
   info "  curl -fsSL https://ollama.com/install.sh | sh"
   info "  ollama pull qwen2.5:14b"
   info ""
-  info "For Telegram, rerun setup when you have your BotFather token:"
-  info "  8mem setup --mode telegram"
-  if [ "$SETUP_MODE" != "interactive" ] && [ -f "$HOME/.openclaw/openclaw.json" ]; then
+  if [ "$TELEGRAM_CONFIGURED" != "1" ]; then
+    info "For Telegram, rerun setup when you have your BotFather token:"
+    info "  8mem setup --mode telegram"
+  fi
+  if [ "$OPENCLAW_WIRED" = "1" ]; then
+    info ""
+    info "OpenClaw was wired automatically."
+    info "Test in Viri:"
+    info "  /passport"
+    info "  /compare coffee"
+    info "  remember I prefer bullet points"
+    info ""
+    info "To undo OpenClaw wiring:"
+    info "  8mem uninstall --mode openclaw"
+  elif [ "$SETUP_MODE" != "interactive" ] && [ -f "$HOME/.openclaw/openclaw.json" ]; then
     info ""
     info "OpenClaw detected. Wire Viri with:"
     info "  8mem setup --mode openclaw"
+  else
+    info ""
+    if [ "$TELEGRAM_CONFIGURED" = "1" ]; then
+      info "Your standalone memory bot is configured."
+      info "After starting 8mem, test in Telegram:"
+      info "  /passport"
+      info "  /compare productivity"
+      info "  remember I prefer short answers"
+    else
+      info "OpenClaw not detected. 8mem is installed as a local memory server."
+    fi
   fi
 }
 
