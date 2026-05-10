@@ -12,11 +12,12 @@ set -euo pipefail
 
 APP_NAME="8mem"
 WHEEL_URL="${EIGHTMEM_WHEEL_URL:-https://8mem.com/app/install/8mem-0.1.0-py3-none-any.whl}"
-WHEEL_SHA256="${EIGHTMEM_WHEEL_SHA256:-7b381944965f14aac9f3b689ab820c0b9fe239bc52303a2037df673051e7d11c}"
+WHEEL_SHA256="${EIGHTMEM_WHEEL_SHA256:-7f3980abb836323c1e045929727af0d3485cd10169e6a39f345c08afd600f8d7}"
 RUNTIME_HOME="${EIGHTMEM_HOME:-$HOME/.8mem}"
 VENV_DIR="${EIGHTMEM_VENV:-$HOME/.8mem/venv}"
 BIN_DIR="${EIGHTMEM_BIN_DIR:-$HOME/.local/bin}"
 RUN_SETUP="${EIGHTMEM_RUN_SETUP:-1}"
+SETUP_MODE="skipped"
 
 info() {
   printf '%s\n' "$*"
@@ -113,14 +114,17 @@ path_contains_bin_dir() {
 run_setup() {
   if [ "$RUN_SETUP" != "1" ]; then
     info "Skipping setup because EIGHTMEM_RUN_SETUP=$RUN_SETUP"
+    SETUP_MODE="skipped"
     return
   fi
 
   info ""
   info "Running first-time setup."
   if [ -t 0 ] && [ -r /dev/tty ]; then
+    SETUP_MODE="interactive"
     "$VENV_DIR/bin/8mem" setup < /dev/tty
   else
+    SETUP_MODE="non_interactive"
     info "No interactive terminal detected; running safe non-interactive setup."
     "$VENV_DIR/bin/8mem" setup --non-interactive --skip-telegram --skip-llm-check
   fi
@@ -169,6 +173,11 @@ print_next_steps() {
   info ""
   info "For Telegram, rerun setup when you have your BotFather token:"
   info "  8mem setup --mode telegram"
+  if [ "$SETUP_MODE" != "interactive" ] && [ -f "$HOME/.openclaw/openclaw.json" ]; then
+    info ""
+    info "OpenClaw detected. Wire Viri with:"
+    info "  8mem setup --mode openclaw"
+  fi
 }
 
 main() {
